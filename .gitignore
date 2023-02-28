@@ -30,6 +30,9 @@ chrome-profiler-events*.json
 !.vscode/extensions.json
 .history/*
 
+# Built Visual Studio Code Extensions
+*.vsix
+
 # misc
 /.sass-cache
 /connect.lock
