@@ -3,9 +3,11 @@ import { EventEmitter } from '@angular/core';
 import { Directive, ElementRef, HostListener, Input, Output, Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { SpinnerType } from '../../base/base.component';
-import { AlertifyService, MessageType, Position } from '../../services/admin/alertify.service';
-import { HttpClientService } from '../../services/common/http-client.service';
+import { SpinnerType } from 'src/app/base/base.component';
+import { DeleteDialogComponent, DeleteState } from 'src/app/dialogs/delete-dialog/delete-dialog.component';
+import { AlertifyService, MessageType, Position } from 'src/app/services/admin/alertify.service';
+import { DialogService } from 'src/app/services/common/dialog.service';
+import { HttpClientService } from 'src/app/services/common/http-client.service';
 
 declare var $: any;
 
@@ -21,6 +23,7 @@ export class DeleteDirective {
     private spinner: NgxSpinnerService,
     public dialog: MatDialog,
     private alertifyService: AlertifyService,
+    private dialogService: DialogService
   ) {
     const img = _renderer.createElement("img");
     img.setAttribute("src", "../../../../../assets/delete.png");
@@ -36,7 +39,11 @@ export class DeleteDirective {
 
   @HostListener("click")
   async onclick() {
-    this.spinner.show(SpinnerType.BallAtom);
+    this.dialogService.openDialog({
+      componentType: DeleteDialogComponent,
+      data: DeleteState.Yes,
+      afterClosed: async () => {
+        this.spinner.show(SpinnerType.BallAtom);
         const td: HTMLTableCellElement = this.element.nativeElement;
         this.httpClientService.delete({
           controller: this.controller
@@ -61,6 +68,8 @@ export class DeleteDirective {
             position: Position.TopRight
           });
         });
+      }
+    });
   }
 
   //openDialog(afterClosed: any): void {
